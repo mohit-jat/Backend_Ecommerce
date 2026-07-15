@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.dto1.OrderItemDTO;
+import com.example.Ecommerce.ClassDto.OrderItemDTO;
 import com.example.Ecommerce.entity.OrderItems;
 import com.example.Ecommerce.entity.Orders;
 import com.example.Ecommerce.entity.Products;

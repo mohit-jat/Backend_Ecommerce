@@ -1,4 +1,5 @@
-package com.example.Ecommerce.dto1;
+package com.example.Ecommerce.ClassDto;
+
 
 
 	import lombok.AllArgsConstructor;
@@ -6,22 +7,21 @@ package com.example.Ecommerce.dto1;
 	import lombok.NoArgsConstructor;
 
 	@Data
-
-	public class CustomerDTO {
+	
+	public class VendorDTO {
 
 	    private Long id;
 
 
 	    private String name;
 
-	    private String email;
+	    private String companyName;
 
-	    private String password;
+	    private String email;
 
 	    private String phone;
 
 	    private String address;
 
 	}
-
 

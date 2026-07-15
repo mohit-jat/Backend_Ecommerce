@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.dto1.CartDTO;
+import com.example.Ecommerce.ClassDto.CartDTO;
 import com.example.Ecommerce.service.CartService;
 
 

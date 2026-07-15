@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.dto1.VendorDTO;
+import com.example.Ecommerce.ClassDto.VendorDTO;
 import com.example.Ecommerce.service.VendorService;
 
 @RestController

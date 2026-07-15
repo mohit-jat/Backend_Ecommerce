@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.dto1.*;
+import com.example.Ecommerce.ClassDto.*;
 import com.example.Ecommerce.entity.Categorys;
 import com.example.Ecommerce.entity.Products;
 import com.example.Ecommerce.entity.Vendors;

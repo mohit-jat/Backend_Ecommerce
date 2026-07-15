@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.dto1.OrdersDTO;
+import com.example.Ecommerce.ClassDto.OrdersDTO;
 import com.example.Ecommerce.entity.Customers;
 import com.example.Ecommerce.entity.Orders;
 import com.example.Ecommerce.exception.ResourceNotFoundException;

@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.dto1.CustomerDTO;
+import com.example.Ecommerce.ClassDto.CustomerDTO;
 import com.example.Ecommerce.entity.Customers;
 import com.example.Ecommerce.exception.ResourceNotFoundException;
 import com.example.Ecommerce.repository.CustomerRepository;

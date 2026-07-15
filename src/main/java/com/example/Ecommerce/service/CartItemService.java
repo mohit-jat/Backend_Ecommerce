@@ -11,8 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.dto1.CartItemDTO;
 import com.example.Ecommerce.entity.Carts;
+import com.example.Ecommerce.ClassDto.CartItemDTO;
 import com.example.Ecommerce.entity.CartItems;
 import com.example.Ecommerce.entity.Products;
 import com.example.Ecommerce.exception.ResourceNotFoundException;
