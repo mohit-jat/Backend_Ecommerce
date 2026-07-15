@@ -1,5 +1,6 @@
 package com.example.Ecommerce.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,70 +8,198 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import com.example.Ecommerce.dto1.CategoryDTO;
+import com.example.Ecommerce.entity.Categorys;
 import com.example.Ecommerce.exception.ResourceNotFoundException;
-import com.example.Ecommerce.entity.Category;
-import com.example.Ecommerce.entity.Product;
 import com.example.Ecommerce.repository.CategoryRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository repo;
-    public Page<Category> getAll(int page, int size) {
-		Pageable pagable = PageRequest.of(page, size);
-		return repo.findAll(pagable);
 
-	}
 
-    
-    
-    @CacheEvict(value = "CategoryService", allEntries = true)
-    public Category save(Category category) {
-        return repo.save(category);
+    // Entity To DTO
+
+    public CategoryDTO convertToDTO(Categorys category) {
+
+        CategoryDTO dto = new CategoryDTO();
+
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        dto.setDescription(category.getDescription());
+
+        return dto;
     }
+
+
+
+    // DTO To Entity
+
+    public Categorys convertToEntity(CategoryDTO dto) {
+
+        Categorys category = new Categorys();
+
+        category.setId(dto.getId());
+        category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
+
+        return category;
+    }
+
+
+
+
+    // Save
+
+    @CacheEvict(value = "CategoryService", allEntries = true)
+    public CategoryDTO save(CategoryDTO dto) {
+
+        Categorys category = convertToEntity(dto);
+
+        Categorys savedCategory = repo.save(category);
+
+        return convertToDTO(savedCategory);
+    }
+
+
+
+
+
+    // Get All
+
     @Cacheable(value = "CategoryService")
+    public List<CategoryDTO> getAll() {
 
-    public List<Category> getAll() {
-        return repo.findAll();
+        List<Categorys> categories = repo.findAll();
+
+        List<CategoryDTO> dtoList = new ArrayList<>();
+
+        for(Categorys category : categories) {
+
+            dtoList.add(convertToDTO(category));
+
+        }
+
+        return dtoList;
     }
+
+
+
+
+
+    // Get By Id
+
     @Cacheable(value = "CategoryService", key = "#id")
+    public CategoryDTO getById(Long id) {
 
-    public Category getById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category Not Found : " + id));
+        Categorys category = repo.findById(id)
+                .orElseThrow(() ->
+                new ResourceNotFoundException(
+                "Category Not Found : " + id));
+
+
+        return convertToDTO(category);
     }
 
-    
+
+
+
+
+    // Update
+
     @CacheEvict(value = "CategoryService", allEntries = true)
-    public Category update(Long id, Category category) {
+    public CategoryDTO update(Long id, CategoryDTO dto) {
 
-        return repo.findById(id).map(c -> {
 
-            c.setName(category.getName());
-            c.setDescription(category.getDescription());
+        Categorys category = repo.findById(id)
+                .orElseThrow(() ->
+                new ResourceNotFoundException(
+                "Category Not Found : " + id));
 
-            return repo.save(c);
 
-        }).orElseThrow(() -> new ResourceNotFoundException("Category Not Found : " + id));
+        category.setName(dto.getName());
+        category.setDescription(dto.getDescription());
+
+
+        Categorys updatedCategory = repo.save(category);
+
+
+        return convertToDTO(updatedCategory);
 
     }
-    
-    @CacheEvict(value = "CategoryService", key = "#id")
 
 
+
+
+
+    // Delete
+
+    @CacheEvict(value = "CategoryService", allEntries = true)
     public String delete(Long id) {
+
+
+        repo.findById(id)
+                .orElseThrow(() ->
+                new ResourceNotFoundException(
+                "Category Not Found : " + id));
+
+
         repo.deleteById(id);
+
+
         return "Category Deleted Successfully";
     }
 
-    public List<Category> sorting(String field) {
-        return repo.findAll(Sort.by(field));
+
+
+
+
+    // Sorting
+
+	@Cacheable(value = "categorys", key = "#field")
+
+    public List<CategoryDTO> sorting(String field) {
+
+
+        List<Categorys> categories = repo.findAll(Sort.by(field));
+
+
+        List<CategoryDTO> dtoList = new ArrayList<>();
+
+
+        for(Categorys category : categories) {
+
+            dtoList.add(convertToDTO(category));
+
+        }
+
+
+        return dtoList;
+    }
+
+
+
+
+
+    // Pagination
+
+    public Page<CategoryDTO> getAll(int page, int size) {
+
+
+        Pageable pageable = PageRequest.of(page, size);
+
+
+        Page<Categorys> categoryPage = repo.findAll(pageable);
+
+
+        return categoryPage.map(this::convertToDTO);
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.Ecommerce.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.hibernate.annotations.SQLDelete;
@@ -27,14 +28,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "product")
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Product SET deleted = true WHERE id=?")
-@SQLRestriction("deleted=false")
-public class Product {
+@Entity
+@Table(name = "products")
+@SQLDelete(sql = "UPDATE products SET deleted = true WHERE id=?")
+@SQLRestriction("deleted = false")
+public class Products  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,11 +69,7 @@ public class Product {
     @JoinColumn(name = "vendor_id", nullable = false)
     @JsonBackReference
 
-    private Vendor vendor;
+    private Vendors vendor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-
-    private Category category;
-
-}
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Categorys category;}

@@ -24,7 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE Orders SET deleted = true WHERE id=?")
-@SQLRestriction("deleted=false")
+@SQLRestriction("deleted = false")
+
 public class Orders {
 
     @Id
@@ -42,11 +43,11 @@ public class Orders {
     @JoinColumn(name = "customer_id")
 
 
-    private Customer customer;
+    private Customers customer;
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     @JsonIgnore
 
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderItems> orderItems = new ArrayList<>();
 
 }

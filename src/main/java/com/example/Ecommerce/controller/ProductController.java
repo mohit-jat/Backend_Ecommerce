@@ -6,56 +6,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.entity.Product;
+import com.example.Ecommerce.dto1.ProductDTO;
 import com.example.Ecommerce.service.ProductService;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
-    @Autowired
-    private ProductService service;
+	@Autowired
+	private ProductService service;
 
-    @PostMapping
-    public Product save(@RequestBody Product product) {
-        return service.save(product);
-    }
+	@PostMapping
+	public ProductDTO save(@RequestBody ProductDTO dto) {
+		return service.save(dto);
+	}
 
-    @GetMapping
-    public List<Product> getAll() {
-        return service.getAll();
-    }
+	@GetMapping
+	public List<ProductDTO> getAll() {
+		return service.getAll();
+	}
 
-    @GetMapping("/{id}")
-    public Product getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
+	@GetMapping("/{id}")
+	public ProductDTO getById(@PathVariable Long id) {
+		return service.getById(id);
+	}
 
-    @PutMapping("/{id}")
-    public Product update(@PathVariable Long id, @RequestBody Product product) {
-        return service.update(id, product);
-    }
+	@PutMapping("/{id}")
+	public ProductDTO update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+		return service.update(id, dto);
+	}
 
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        return service.delete(id);
-    }
+	@DeleteMapping("/{id}")
+	public String delete(@PathVariable Long id) {
+		return service.delete(id);
+	}
 
-    @GetMapping("sort/{field}")
-    public List<Product> sorting(@PathVariable String field) {
-        return service.sorting(field);
-    }
+	@GetMapping("/sort/{field}")
+	public List<ProductDTO> sorting(@PathVariable String field) {
+		return service.sorting(field);
+	}
 
-    @GetMapping("/page")
-	public Page<Product> findPage(@RequestParam(defaultValue = "0") int page,
+	@GetMapping("/search")
+	public List<ProductDTO> search(@RequestParam String name) {
+		return service.search(name);
+	}
+
+	@GetMapping("/page")
+	public Page<ProductDTO> getAll(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
+
 		return service.getAll(page, size);
 	}
-    
-    @GetMapping("/search")
-    public List<Product> search(@RequestParam String name){
 
-    	return service.search(name);
-
-    }
 }

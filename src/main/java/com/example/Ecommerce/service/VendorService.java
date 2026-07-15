@@ -1,5 +1,6 @@
 package com.example.Ecommerce.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,91 +8,155 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.example.Ecommerce.entity.Product;
-import com.example.Ecommerce.entity.Vendor;
+import com.example.Ecommerce.dto1.VendorDTO;
+import com.example.Ecommerce.entity.Vendors;
 import com.example.Ecommerce.exception.ResourceNotFoundException;
 import com.example.Ecommerce.repository.VendorRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Service
 public class VendorService {
 
     @Autowired
     private VendorRepository repo;
-    public Page<Vendor> getAll(int page, int size) {
-		Pageable pagable = PageRequest.of(page, size);
-		return repo.findAll(pagable);
 
-	}
+    // ================= Entity -> DTO =================
 
-    @CacheEvict(value="VendorService", allEntries = true)
+    public VendorDTO convertToDTO(Vendors vendor) {
 
-    public Vendor save(Vendor vendor) {
-        return repo.save(vendor);
+        VendorDTO dto = new VendorDTO();
+
+        dto.setId(vendor.getId());
+        dto.setName(vendor.getName());
+        dto.setCompanyName(vendor.getCompanyName());
+        dto.setEmail(vendor.getEmail());
+        dto.setPhone(vendor.getPhone());
+        dto.setAddress(vendor.getAddress());
+
+        return dto;
     }
+
+    // ================= DTO -> Entity =================
+
+    public Vendors convertToEntity(VendorDTO dto) {
+
+        Vendors vendor = new Vendors();
+
+        vendor.setId(dto.getId());
+        vendor.setName(dto.getName());
+        vendor.setCompanyName(dto.getCompanyName());
+        vendor.setEmail(dto.getEmail());
+        vendor.setPhone(dto.getPhone());
+        vendor.setAddress(dto.getAddress());
+
+        return vendor;
+    }
+
+    // ================= Save =================
+
+    public VendorDTO save(VendorDTO dto) {
+
+        Vendors vendor = convertToEntity(dto);
+
+        Vendors savedVendor = repo.save(vendor);
+
+        return convertToDTO(savedVendor);
+    }
+
+    // ================= Get All =================
 
     @Cacheable("VendorService")
+    public List<VendorDTO> getAll() {
 
-    public List<Vendor> getAll() {
-        return repo.findAll();
+        List<Vendors> vendors = repo.findAll();
+
+        List<VendorDTO> dtoList = new ArrayList<>();
+
+        for (Vendors vendor : vendors) {
+
+            dtoList.add(convertToDTO(vendor));
+
+        }
+
+        return dtoList;
     }
 
+    // ================= Get By Id =================
 
-    @CacheEvict(value="VendorService", allEntries = true)
-public Vendor getById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException ("Vendor Not Found : " + id));
+    @Cacheable(value = "VendorService", key = "#id")
+    public VendorDTO getById(Long id) {
+
+        Vendors vendor = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found : " + id));
+
+        VendorDTO dto = convertToDTO(vendor);
+
+        return dto;
     }
 
-    
-    
-    
-    @CacheEvict(value="VendorService", allEntries = true)
+    // ================= Update =================
 
-    public Vendor update(Long id, Vendor vendor) {
+    @CacheEvict(value = "VendorService", allEntries = true)
+    public VendorDTO update(Long id, VendorDTO dto) {
 
-        return repo.findById(id).map(v -> {
+        Vendors vendor = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found : " + id));
 
-            v.setName(vendor.getName());
-            v.setCompanyName(vendor.getCompanyName());
-            v.setEmail(vendor.getEmail());
-            v.setPhone(vendor.getPhone());
-            v.setAddress(vendor.getAddress());
+        vendor.setName(dto.getName());
+        vendor.setCompanyName(dto.getCompanyName());
+        vendor.setEmail(dto.getEmail());
+        vendor.setPhone(dto.getPhone());
+        vendor.setAddress(dto.getAddress());
 
-            return repo.save(v);
+        Vendors updatedVendor = repo.save(vendor);
 
-        }).orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found : " + id));
-
+        return convertToDTO(updatedVendor);
     }
-    
-    
-    
-    
-    @CacheEvict(value="VendorService", allEntries = true)
 
+    // ================= Delete =================
+
+    @CacheEvict(value = "VendorService", allEntries = true)
     public String delete(Long id) {
-	
+
         repo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Not Found : " + id));
 
         repo.deleteById(id);
 
         return "Vendor Deleted Successfully";
-    }    
-    
-    
-    
+    }
 
-    public List<Vendor> sorting(String field) {
+    // ================= Sorting =================
 
-        return repo.findAll(Sort.by(field));
+	@Cacheable(value = "vendors", key = "#field")
 
-    
+    public List<VendorDTO> sorting(String field) {
+
+        List<Vendors> vendors = repo.findAll(Sort.by(field));
+
+        List<VendorDTO> dtoList = new ArrayList<>();
+
+        for (Vendors vendor : vendors) {
+
+            dtoList.add(convertToDTO(vendor));
+
+        }
+
+        return dtoList;
+    }
+
+    // ================= Pagination =================
+
+    public Page<VendorDTO> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Vendors> vendorPage = repo.findAll(pageable);
+
+        return vendorPage.map(this::convertToDTO);
     }
 
 }

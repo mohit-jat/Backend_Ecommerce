@@ -1,44 +1,82 @@
 package com.example.Ecommerce.controller;
 
 import java.util.List;
-import org.springframework.data.domain.Page;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.entity.CartItem;
+import com.example.Ecommerce.dto1.CartItemDTO;
 import com.example.Ecommerce.service.CartItemService;
+
 
 @RestController
 @RequestMapping("/cartitem")
 public class CartItemController {
 
+
     @Autowired
     private CartItemService service;
 
+
+
+    // Save
     @PostMapping
-    public CartItem save(@RequestBody CartItem cartItem) {
-        return service.save(cartItem);
+    public CartItemDTO save(@RequestBody CartItemDTO dto) {
+
+        return service.save(dto);
+
     }
 
+
+
+    // Get All
     @GetMapping
-    public List<CartItem> getAll() {
+    public List<CartItemDTO> getAll() {
+
         return service.getAll();
+
     }
 
+
+
+
+    // Get By Id
     @GetMapping("/{id}")
-    public CartItem getById(@PathVariable Long id) {
+    public CartItemDTO getById(@PathVariable Long id) {
+
         return service.getById(id);
+
     }
 
+
+
+
+    // Delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
+
         return service.delete(id);
+
     }
-    @GetMapping("/cartitem/{page}")
-	public Page<CartItem> findPage(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return service.getAll(page, size);
-	}
+
+     //update
+    @PutMapping("/{id}")
+    public CartItemDTO update(@PathVariable Long id,
+                              @RequestBody CartItemDTO dto) {
+
+        return service.update(id, dto);
+    }
+
+    // Pagination
+    @GetMapping("/page")
+    public Page<CartItemDTO> findPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+
+        return service.getAll(page, size);
+
+    }
+
 }

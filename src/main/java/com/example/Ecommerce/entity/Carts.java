@@ -17,13 +17,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cart")
+@Table(name = "carts")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE cart SET deleted = true WHERE id=?")
-@SQLRestriction("deleted=false")
-public class Cart {
+@SQLDelete(sql = "UPDATE carts SET deleted = true WHERE id=?")
+@SQLRestriction("deleted = false")
+
+public class Carts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +34,10 @@ public class Cart {
     @OneToOne
     @JoinColumn(name = "customer_id")
 
-    private Customer customer;
+    private Customers customer;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     @JsonIgnore	
-    private List<CartItem> cart_item = new ArrayList<>();
+    private List<CartItems> cart_item = new ArrayList<>();
 
 }

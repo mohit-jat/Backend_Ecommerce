@@ -5,37 +5,56 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.entity.Cart;
+import com.example.Ecommerce.dto1.CartDTO;
 import com.example.Ecommerce.service.CartService;
+
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
 
+
     @Autowired
     private CartService service;
 
+
+
+    // Save
     @PostMapping
-    public Cart save(@RequestBody Cart cart) {
-    	
-    	System.out.println("Customer = " + cart.getCustomer());
-    	System.out.println("Customer Id = " +
-    	    (cart.getCustomer() != null ? cart.getCustomer().getId() : null));
-        return service.save(cart);
+    public CartDTO save(@RequestBody CartDTO dto) {
+
+        return service.save(dto);
+
     }
 
+
+
+    // Get All
     @GetMapping
-    public List<Cart> getAll() {
+    public List<CartDTO> getAll() {
+
         return service.getAll();
+
     }
 
+
+
+    // Get By Id
     @GetMapping("/{id}")
-    public Cart getById(@PathVariable Long id) {
+    public CartDTO getById(@PathVariable Long id) {
+
         return service.getById(id);
+
     }
 
+
+
+    // Delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
+
         return service.delete(id);
+
     }
+
 }

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.entity.Category;
+import com.example.Ecommerce.dto1.CategoryDTO;
 import com.example.Ecommerce.service.CategoryService;
 
 @RestController
@@ -16,39 +16,59 @@ public class CategoryController {
     @Autowired
     private CategoryService service;
 
+
+    // Save
     @PostMapping
-    public Category save(@RequestBody Category category) {
-        return service.save(category);
+    public CategoryDTO save(@RequestBody CategoryDTO dto) {
+        return service.save(dto);
     }
 
+
+    // Get All
     @GetMapping
-    public List<Category> getAll() {
+    public List<CategoryDTO> getAll() {
         return service.getAll();
     }
 
+
+    // Get By Id
     @GetMapping("/{id}")
-    public Category getById(@PathVariable Long id) {
+    public CategoryDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
+
+    // Update
     @PutMapping("/{id}")
-    public Category update(@PathVariable Long id, @RequestBody Category category) {
-        return service.update(id, category);
+    public CategoryDTO update(@PathVariable Long id,
+                              @RequestBody CategoryDTO dto) {
+
+        return service.update(id, dto);
     }
 
+
+    // Delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         return service.delete(id);
     }
 
+
+    // Sorting
     @GetMapping("/sort/{field}")
-    public List<Category> sorting(@PathVariable String field) {
+    public List<CategoryDTO> sorting(@PathVariable String field) {
+
         return service.sorting(field);
     }
 
-    @GetMapping("/category/{page}")
-	public Page<Category> findPage(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		return service.getAll(page, size);
-	}
+
+    // Pagination
+    @GetMapping("/page")
+    public Page<CategoryDTO> findPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return service.getAll(page, size);
+    }
+
 }

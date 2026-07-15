@@ -24,13 +24,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categorys")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE Category SET deleted = true WHERE id=?")
-@SQLRestriction("deleted=false")
-public class Category {
+@SQLDelete(sql = "UPDATE Categorys SET deleted = true WHERE id=?")
+@SQLRestriction("deleted = false")
+
+public class Categorys {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +55,6 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonIgnore
 
-    private List<Product> products = new ArrayList<>();
+    private List<Products> products = new ArrayList<>();
 
 }

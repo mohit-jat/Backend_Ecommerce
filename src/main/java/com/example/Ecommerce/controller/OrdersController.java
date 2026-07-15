@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Ecommerce.entity.Orders;
+import com.example.Ecommerce.dto1.OrdersDTO;
 import com.example.Ecommerce.service.OrdersService;
 
 @RestController
@@ -15,21 +15,25 @@ public class OrdersController {
     @Autowired
     private OrdersService service;
 
+    // Save
     @PostMapping
-    public Orders save(@RequestBody Orders orders) {
-        return service.save(orders);
+    public OrdersDTO save(@RequestBody OrdersDTO dto) {
+        return service.save(dto);
     }
 
+    // Get All
     @GetMapping
-    public List<Orders> getAll() {
+    public List<OrdersDTO> getAll() {
         return service.getAll();
     }
 
+    // Get By Id
     @GetMapping("/{id}")
-    public Orders getById(@PathVariable Long id) {
+    public OrdersDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
+    // Delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
         return service.delete(id);

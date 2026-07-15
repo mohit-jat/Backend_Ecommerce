@@ -13,13 +13,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cart_item")
+@Table(name = "cart_items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE cart_item SET deleted = true WHERE id=?")
-@SQLRestriction("deleted=false")
-public class CartItem {
+@SQLDelete(sql = "UPDATE cart_items SET deleted = true WHERE id=?")
+@SQLRestriction("deleted = false")
+
+public class CartItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,12 +33,12 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "cart_id")
 
-    private Cart  cart;
+    private Carts  cart;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
 
 
-    private Product product;
+    private Products product;
 
 }

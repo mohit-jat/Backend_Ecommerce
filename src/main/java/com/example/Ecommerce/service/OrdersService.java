@@ -1,59 +1,117 @@
 package com.example.Ecommerce.service;
 
-import java.util.List;import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.example.Ecommerce.dto1.OrdersDTO;
+import com.example.Ecommerce.entity.Customers;
 import com.example.Ecommerce.entity.Orders;
 import com.example.Ecommerce.exception.ResourceNotFoundException;
+import com.example.Ecommerce.repository.CustomerRepository;
 import com.example.Ecommerce.repository.OrdersRepository;
 
 @Service
 public class OrdersService {
 
-    @Autowired
-    private OrdersRepository repo;
+	@Autowired
+	private OrdersRepository repo;
 
-    @CacheEvict(value = "OrdersService", allEntries = true)
+	@Autowired
+	private CustomerRepository customerRepo;
 
-    public Orders save(Orders orders) {
-        return repo.save(orders);
-    }
-    
-    
-    
-    
-    
-    @Cacheable(value ="OrdersService")
+	// ================= Entity -> DTO =================
 
-    public List<Orders> getAll() {
-        return repo.findAll();
-    }
-    
-    
-    
-    
-    
-    @Cacheable(value ="OrdersService",key ="#id")
+	public OrdersDTO convertToDTO(Orders orders) {
 
-    public Orders getById(Long id) {
-        return repo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Order Not Found : " + id));
-    }
-    
-    
-    
-    
-    @CacheEvict(value = "OrdersService", key = "#id")
+		OrdersDTO dto = new OrdersDTO();
 
-    public String delete(Long id) {
-        repo.deleteById(id);
-        return "Order Deleted Successfully";
-    }
+		dto.setId(orders.getId());
+		dto.setOrderDate(orders.getOrderDate());
+		dto.setTotalAmount(orders.getTotalAmount());
+
+		if (orders.getCustomer() != null) {
+			dto.setCustomerId(orders.getCustomer().getId());
+		}
+
+		return dto;
+	}
+
+	// ================= DTO -> Entity =================
+
+	public Orders convertToEntity(OrdersDTO dto) {
+
+		Orders orders = new Orders();
+
+		orders.setId(dto.getId());
+		orders.setOrderDate(dto.getOrderDate());
+		orders.setTotalAmount(dto.getTotalAmount());
+
+		if (dto.getCustomerId() != null) {
+
+			Customers customer = customerRepo.findById(dto.getCustomerId())
+					.orElseThrow(() -> new ResourceNotFoundException("Customer Not Found : " + dto.getCustomerId()));
+
+			orders.setCustomer(customer);
+		}
+
+		return orders;
+	}
+
+	// ================= Save =================
+
+	@CacheEvict(value = "OrdersService", allEntries = true)
+	public OrdersDTO save(OrdersDTO dto) {
+
+		Orders orders = convertToEntity(dto);
+
+		Orders savedOrder = repo.save(orders);
+
+		return convertToDTO(savedOrder);
+	}
+
+	// ================= Get All =================
+
+	@Cacheable("OrdersService")
+	public List<OrdersDTO> getAll() {
+
+		List<Orders> ordersList = repo.findAll();
+
+		List<OrdersDTO> dtoList = new ArrayList<>();
+
+		for (Orders orders : ordersList) {
+
+			dtoList.add(convertToDTO(orders));
+
+		}
+
+		return dtoList;
+	}
+
+	// ================= Get By Id =================
+
+	@Cacheable(value = "OrdersService", key = "#id")
+	public OrdersDTO getById(Long id) {
+
+		Orders orders = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order Not Found : " + id));
+
+		return convertToDTO(orders);
+	}
+
+	// ================= Delete =================
+
+	@CacheEvict(value = "OrdersService", allEntries = true)
+	public String delete(Long id) {
+
+		repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order Not Found : " + id));
+
+		repo.deleteById(id);
+
+		return "Order Deleted Successfully";
+	}
 
 }
