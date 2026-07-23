@@ -146,9 +146,7 @@ public class ProductService {
 		  
 
 		List<ProductDTO> dtoList = new ArrayList<>();
-		List<Products> products1 = repo.searchByName(name);
 
-		System.out.println(products.size());
 		for (Products product : products) {
 			dtoList.add(convertToDTO(product));
 		}

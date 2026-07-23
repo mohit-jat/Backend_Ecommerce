@@ -9,12 +9,18 @@ import org.springframework.web.bind.annotation.*;
 import com.example.Ecommerce.ClassDto.ProductDTO;
 import com.example.Ecommerce.service.ProductService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/product")
+
 public class ProductController {
 
 	@Autowired
 	private ProductService service;
+	
+	
+	
 
 	@PostMapping
 	public ProductDTO save(@RequestBody ProductDTO dto) {
@@ -28,6 +34,8 @@ public class ProductController {
 
 	@GetMapping("/{id}")
 	public ProductDTO getById(@PathVariable Long id) {
+	
+		
 		return service.getById(id);
 	}
 
