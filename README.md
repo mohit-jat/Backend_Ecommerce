@@ -636,7 +636,7 @@ When a requested resource is not found (for instance, an invalid ID is supplied)
    ```
 3. Build the project using Maven:
    ```bash
-   mvn clean install
+   mvn clean package -DskipTests
    ```
 4. Run the Spring Boot application:
    ```bash
@@ -646,3 +646,90 @@ When a requested resource is not found (for instance, an invalid ID is supplied)
    ```bash
    ./mvnw spring-boot:run
    ```
+
+---
+
+## Deployment Guide: Docker, Neon DB, and Render
+
+### 1. Database Setup on Neon DB (PostgreSQL)
+
+Neon DB provides a managed serverless PostgreSQL database.
+
+1. Sign up/Log in at [Neon.tech](https://neon.tech).
+2. Create a new project and note down your PostgreSQL connection details.
+3. Retrieve your Neon DB Connection String. It looks like:
+   `postgres://username:password@ep-xyz.neon.tech/neondb?sslmode=require`
+4. Convert it to the Spring JDBC Connection URL format:
+   `jdbc:postgresql://ep-xyz.neon.tech/neondb?sslmode=require`
+
+---
+
+### 2. Local Docker Packaging using target/*.jar
+
+#### Step A: Package JAR File
+Build the JAR file into the `target/` directory:
+```bash
+mvn clean package -DskipTests
+```
+This generates the executable executable file inside `target/Ecommerce-0.0.1-SNAPSHOT.jar` (or `target/*.jar`).
+
+#### Step B: Dockerfile Configuration
+The project uses the following `Dockerfile` located in the root directory:
+```dockerfile
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY target/*.jar app.jar
+EXPOSE 8083
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+#### Step C: Build Docker Image
+Run the Docker build command from the root directory:
+```bash
+docker build -t ecommerce-app .
+```
+
+#### Step D: Run Container with Neon DB Environment Variables
+Run the container passing your Neon DB database credentials as environment variables:
+```bash
+docker run -d \
+  -p 8083:8083 \
+  -e SPRING_DATASOURCE_URL="jdbc:postgresql://ep-xyz.neon.tech/neondb?sslmode=require" \
+  -e SPRING_DATASOURCE_USERNAME="neondb_owner" \
+  -e SPRING_DATASOURCE_PASSWORD="your_neon_password" \
+  -e SPRING_DATASOURCE_DRIVER_CLASS_NAME="org.postgresql.Driver" \
+  -e SPRING_JPA_DATABASE_PLATFORM="org.hibernate.dialect.PostgreSQLDialect" \
+  --name ecommerce-backend ecommerce-app
+```
+
+---
+
+### 3. Deploying to Render Web Service
+
+1. **Push Code & Built JAR to GitHub**:
+   Ensure your code, `Dockerfile`, `.dockerignore`, and committed changes are pushed to your GitHub repository.
+
+2. **Create New Web Service on Render**:
+   - Go to your dashboard on [Render.com](https://render.com).
+   - Click **New** > **Web Service**.
+   - Connect your GitHub repository.
+
+3. **Configure Web Service Settings**:
+   - **Name**: `ecommerce-backend`
+   - **Runtime**: `Docker`
+   - **Build Command**: Leave blank (Render detects the root `Dockerfile`).
+   - **Instance Type**: Free / Starter
+
+4. **Set Environment Variables on Render**:
+   In the **Environment** section of your Render Web Service dashboard, add the following variables:
+   - `SPRING_DATASOURCE_URL` = `jdbc:postgresql://ep-xyz.neon.tech/neondb?sslmode=require`
+   - `SPRING_DATASOURCE_USERNAME` = `your_neon_username`
+   - `SPRING_DATASOURCE_PASSWORD` = `your_neon_password`
+   - `SPRING_DATASOURCE_DRIVER_CLASS_NAME` = `org.postgresql.Driver`
+   - `SPRING_JPA_DATABASE_PLATFORM` = `org.hibernate.dialect.PostgreSQLDialect`
+   - `SPRING_JPA_HIBERNATE_DDL_AUTO` = `update`
+   - `PORT` = `8083`
+
+5. **Deploy**:
+   - Click **Create Web Service**. Render will pull your repository, build the Docker container using `Dockerfile`, copy `target/*.jar`, and start the service live.
+
