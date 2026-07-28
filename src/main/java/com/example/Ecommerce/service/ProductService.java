@@ -35,6 +35,8 @@ public class ProductService {
 	private VendorRepository vendorRepo;
 
 	// SAVE
+	@CacheEvict(value = "ProductService", allEntries = true)
+
 	public ProductDTO save(ProductDTO dto) {
 
 		Categorys category = categoryRepo.findById(dto.getCategoryId())
