@@ -7,14 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.Ecommerce.entity.Products;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 
 public interface ProductRepository extends JpaRepository<Products, Long> {
 
-    List<Products> findByNameContainingIgnoreCase(String name);
-   
-    
-    @Query("SELECT p FROM Products p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
-    List<Products> searchByName(@Param("name") String name);
+	List<Products> findByNameContainingIgnoreCase(String name);
+
+	@Query("SELECT p FROM Products p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+	List<Products> searchByName(@Param("name") String name);
 
 }
