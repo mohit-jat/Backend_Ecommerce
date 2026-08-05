@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.Ecommerce.ClassDto.OrderItemDTO;
 import com.example.Ecommerce.service.OrderItemService;
 
-@RestController
+@CrossOrigin(origins = "https://bharatbazaar-app.vercel.app") 
 @RequestMapping("/orderitem")
 public class OrderItemController {
 

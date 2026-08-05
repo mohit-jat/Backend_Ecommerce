@@ -11,7 +11,7 @@ import com.example.Ecommerce.service.ProductService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@CrossOrigin(origins = "https://bharatbazaar-app.vercel.app")
 @RequestMapping("/product")
 
 public class ProductController {
